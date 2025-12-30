@@ -28,7 +28,7 @@ Community-Driven Safety: We are building a standard for safety data extraction. 
 * **Offline-First:** Critical safety data is cached locally on iPad/Mobile devices for access during network outages.
 
 ## 🛠️ Tech Stack
-* **Frontend:** Next.js 15, React, Tailwind CSS
+* **Frontend:** Next.js 16, React, Tailwind CSS
 * **Backend:** Node.js, PostgreSQL (Prisma)
 * **AI Engine:** OpenAI GPT-4o-mini / specialized OCR pipelines
 * **API Integrations:** Support for CloudSDS and SDS Manager APIs
@@ -38,6 +38,21 @@ Community-Driven Safety: We are building a standard for safety data extraction. 
 2. **Install dependencies:** `npm install`
 3. **Set up Environment Variables:** Copy `.env.example` to `.env` and add your API keys.
 4. **Run development server:** `npm run dev`
+
+## 🐳 Docker Quickstart (One-Click)
+
+To run the entire system (Frontend, Backend, Database) locally without installing Node.js or Postgres:
+
+1.  **Install Docker Desktop** (if not already installed).
+2.  **Create env file:** Copy `.env.example` to `.env` and fill in any required API keys (e.g., `OPENAI_API_KEY`).
+    *   *Note: The database connection is handled automatically by Docker.*
+3.  **Run:**
+    ```bash
+    docker-compose up
+    ```
+4.  Open [http://localhost:3000](http://localhost:3000).
+
+To stop the system: `Ctrl+C` or `docker-compose down`.
 
 ## ⚖️ License
 Distributed under the MIT License. See `LICENSE` for more information.
