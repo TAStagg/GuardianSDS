@@ -1,63 +1,20 @@
 "use client"
 
-import { useState, useRef, useEffect } from "react"
+import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
-import { MessageCircle, X, Send } from "lucide-react"
+import { MessageCircle, X, Send, Loader2 } from "lucide-react"
 import { cn } from "@/lib/utils"
+import { useSpillChat } from "@/hooks/use-spill-chat"
 
-interface Message {
-    role: "user" | "assistant";
-    content: string;
-}
-
-// Mock RAG Interface
 interface SpillChatProps {
-    sdsContext: any; // The full SDS JSON object to query against
+    sdsContext: any;
 }
 
 export function SpillChat({ sdsContext }: SpillChatProps) {
     const [isOpen, setIsOpen] = useState(false)
-    const [messages, setMessages] = useState<Message[]>([
-        { role: "assistant", content: "I'm your safety assistant. Ask me about first aid, spills, or PPE." }
-    ])
-    const [input, setInput] = useState("")
-    const scrollRef = useRef<HTMLDivElement>(null)
-
-    useEffect(() => {
-        if (scrollRef.current) {
-            scrollRef.current.scrollTop = scrollRef.current.scrollHeight
-        }
-    }, [messages])
-
-    const handleSend = () => {
-        if (!input.trim()) return
-
-        const userMsg = input
-        setMessages(prev => [...prev, { role: "user", content: userMsg }])
-        setInput("")
-
-        // Simple Mock RAG Logic
-        setTimeout(() => {
-            let response = "I'm checking the safety sheet..."
-            const lowerInput = userMsg.toLowerCase()
-
-            if (lowerInput.includes("eye") || lowerInput.includes("vision")) {
-                response = `From Section 4 (First Aid): ${sdsContext?.section4?.eyeContact || "Rinse cautiously with water for several minutes."}`
-            } else if (lowerInput.includes("skin") || lowerInput.includes("touch")) {
-                response = `From Section 4 (First Aid): ${sdsContext?.section4?.skinContact || "Wash with soap and water."}`
-            } else if (lowerInput.includes("spill") || lowerInput.includes("leak")) {
-                response = `From Section 6 (Accidental Release): ${sdsContext?.section6?.personalPrecautions || "Wear protective equipment. Contain spill."}`
-            } else if (lowerInput.includes("fire")) {
-                response = `From Section 5 (Fire Fighting): ${sdsContext?.section5?.extinguishingMedia || "Use water spray, alcohol-resistant foam, dry chemical, or carbon dioxide."}`
-            } else {
-                response = "I couldn't find a specific answer in the safety sheet. Please check the full document or call emergency services."
-            }
-
-            setMessages(prev => [...prev, { role: "assistant", content: response }])
-        }, 600)
-    }
+    const { messages, input, setInput, handleSend, scrollRef, isTyping } = useSpillChat(sdsContext)
 
     return (
         <>
@@ -96,6 +53,13 @@ export function SpillChat({ sdsContext }: SpillChatProps) {
                                     </div>
                                 </div>
                             ))}
+                            {isTyping && (
+                                <div className="flex justify-start">
+                                    <div className="bg-secondary text-foreground rounded-lg p-3 rounded-bl-none">
+                                        <Loader2 className="h-4 w-4 animate-spin" />
+                                    </div>
+                                </div>
+                            )}
                         </div>
 
                         {/* Input Area */}
@@ -107,7 +71,7 @@ export function SpillChat({ sdsContext }: SpillChatProps) {
                                 onKeyDown={(e) => e.key === "Enter" && handleSend()}
                                 className="flex-1"
                             />
-                            <Button size="icon" onClick={handleSend} disabled={!input.trim()}>
+                            <Button size="icon" onClick={handleSend} disabled={!input.trim() || isTyping}>
                                 <Send className="h-4 w-4" />
                             </Button>
                         </div>

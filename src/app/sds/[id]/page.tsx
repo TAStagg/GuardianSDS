@@ -3,74 +3,32 @@
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { AlertTriangle, Printer, Share2, FileDown, ArrowLeft, Skull, Flame, Hand, Eye, Shield } from "lucide-react"
+import { AlertTriangle, Printer, Share2, FileDown, ArrowLeft, Skull, Flame, Hand, Eye, Shield, Loader2 } from "lucide-react"
 import Link from "next/link"
 import { useState, useEffect } from "react"
 import { SpillChat } from "@/components/spill-chat"
 import { GhsLabel } from "@/components/ghs-label"
-
-// Mock Data (In real app, fetch via ID)
-const mockSds = {
-    section1: {
-        productName: "Concentrated Bleach",
-        productCode: "B-204",
-        manufacturer: {
-            name: "Clorox Professional Products",
-            emergencyPhone: "1-800-446-1011"
-        }
-    },
-    section2: {
-        signalWord: "DANGER",
-        hazardStatements: [
-            { code: "H314", statement: "Causes severe skin burns and eye damage" },
-            { code: "H290", statement: "May be corrosive to metals" },
-            { code: "H400", statement: "Very toxic to aquatic life" }
-        ]
-    },
-    section4: {
-        eyeContact: "Rinse immediately with plenty of water, also under the eyelids, for at least 15 minutes. Remove contact lenses, if present and easy to do. Continue rinsing.",
-        skinContact: "Wash off immediately with soap and plenty of water.",
-        inhalation: "Move to fresh air."
-    },
-    section5: {
-        extinguishingMedia: "Use extinguishing measures that are appropriate to local circumstances and the surrounding environment."
-    },
-    section6: {
-        personalPrecautions: "Avoid contact with skin, eyes and clothing. Use personal protective equipment."
-    },
-    section9: {
-        appearance: "Clear, pale yellow liquid",
-        ph: "~12.5",
-        odor: "Bleach"
-    }
-} // Partial mock for demo
-
-import { db } from "@/lib/db"
-import { SDS } from "@/lib/schema"
+import { useSDS } from "@/hooks/use-sds"
 
 export default function SDSDetailPage({ params }: { params: Promise<{ id: string }> }) {
     const [showLabel, setShowLabel] = useState(false)
-    const [sdsData, setSdsData] = useState<SDS | null>(null)
+    const [id, setId] = useState<string | null>(null)
 
-    // Unwrap params using React.use() or useEffect - Next.js 15+ async params handling
-    const [id, setId] = useState<string>("")
-
+    // Unwrap params
     useEffect(() => {
-        params.then(p => {
-            setId(p.id)
-            // Try filter from DB
-            db.sds.where("sdsId").equals(p.id).first().then(record => {
-                if (record) {
-                    setSdsData(record.data)
-                } else {
-                    // Fallback to mock if not found (e.g. direct link to /sds/1)
-                    setSdsData(mockSds as unknown as SDS)
-                }
-            })
-        })
+        params.then(p => setId(p.id))
     }, [params])
 
-    if (!sdsData) return <div className="p-8">Loading SDS...</div>
+    const { sds: sdsData, isLoading } = useSDS(id)
+
+    if (isLoading || !sdsData) {
+        return (
+            <div className="flex h-[50vh] items-center justify-center">
+                <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+                <span className="ml-2 text-muted-foreground">Loading SDS...</span>
+            </div>
+        )
+    }
 
     return (
         <div className="space-y-6 relative">

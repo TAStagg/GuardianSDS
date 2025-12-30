@@ -5,15 +5,18 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { useRef, useState } from "react"
 import { useRouter } from "next/navigation"
-import { Search, Folder, Plus, FileText, Filter, Loader2 } from "lucide-react"
+import { Search, Folder, Plus, FileText, Filter, Loader2, AlertCircle, CheckCircle, X } from "lucide-react"
 import { cacheSDS } from "@/lib/db"
+import { cn } from "@/lib/utils"
 
 export default function LibraryPage() {
     const fileInputRef = useRef<HTMLInputElement>(null)
     const [isUploading, setIsUploading] = useState(false)
+    const [uploadStatus, setUploadStatus] = useState<{ type: 'success' | 'error', message: string } | null>(null)
     const router = useRouter()
 
     const handleUploadClick = () => {
+        setUploadStatus(null)
         fileInputRef.current?.click()
     }
 
@@ -22,6 +25,8 @@ export default function LibraryPage() {
         if (!file) return
 
         setIsUploading(true)
+        setUploadStatus(null)
+
         try {
             const formData = new FormData()
             formData.append("file", file)
@@ -39,16 +44,22 @@ export default function LibraryPage() {
                 // Save to local offline web-database (Dexie) so we can view it
                 await cacheSDS(tempId, json.data)
 
+                setUploadStatus({ type: 'success', message: 'SDS uploaded and parsed successfully! Redirecting...' })
+
                 // Redirect to view it
-                router.push(`/sds/${tempId}`)
+                setTimeout(() => {
+                    router.push(`/sds/${tempId}`)
+                }, 1000)
             } else {
-                alert("Failed to parse SDS")
+                setUploadStatus({ type: 'error', message: "Failed to parse SDS. Please try a different file." })
             }
         } catch (error) {
             console.error(error)
-            alert("Upload failed")
+            setUploadStatus({ type: 'error', message: "Upload failed. Please check your connection." })
         } finally {
             setIsUploading(false)
+            // Reset input so same file can be selected again if needed
+            if (fileInputRef.current) fileInputRef.current.value = ''
         }
     }
 
@@ -61,6 +72,7 @@ export default function LibraryPage() {
                 accept=".pdf,application/pdf"
                 onChange={handleFileChange}
             />
+
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div>
                     <h1 className="text-3xl font-bold tracking-tight">SDS Library</h1>
@@ -77,6 +89,20 @@ export default function LibraryPage() {
                     </Button>
                 </div>
             </div>
+
+            {/* Status Banner */}
+            {uploadStatus && (
+                <div className={cn(
+                    "p-4 rounded-lg flex items-center gap-3 shadow-sm animate-in fade-in slide-in-from-top-2",
+                    uploadStatus.type === 'success' ? "bg-green-50 text-green-700 border border-green-200" : "bg-red-50 text-red-700 border border-red-200"
+                )}>
+                    {uploadStatus.type === 'success' ? <CheckCircle className="h-5 w-5 shrink-0" /> : <AlertCircle className="h-5 w-5 shrink-0" />}
+                    <p className="text-sm font-medium flex-1">{uploadStatus.message}</p>
+                    <button onClick={() => setUploadStatus(null)} className="hover:opacity-70">
+                        <X className="h-4 w-4" />
+                    </button>
+                </div>
+            )}
 
             {/* Search Bar */}
             <div className="flex gap-2">
