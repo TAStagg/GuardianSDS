@@ -36,7 +36,7 @@ export function Sidebar() {
             <div className="md:hidden fixed top-4 left-4 z-50">
                 <button
                     onClick={() => setIsMobileOpen(!isMobileOpen)}
-                    className="p-2 bg-background border rounded-md shadow-sm"
+                    className="p-2 bg-background border rounded-md shadow-sm hover:bg-secondary"
                     aria-label="Toggle Menu"
                 >
                     <Menu className="h-6 w-6" />
@@ -46,7 +46,7 @@ export function Sidebar() {
             {/* Sidebar Container */}
             <div
                 className={cn(
-                    "fixed inset-y-0 left-0 z-40 w-64 bg-card border-r flex flex-col transition-transform duration-300 ease-in-out md:translate-x-0 md:static",
+                    "fixed inset-y-0 left-0 z-40 w-64 bg-background border-r flex flex-col transition-transform duration-300 ease-in-out md:translate-x-0 md:static",
                     isMobileOpen ? "translate-x-0" : "-translate-x-full"
                 )}
             >

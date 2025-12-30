@@ -1,5 +1,23 @@
 # GuardianSDS
 
+📄 Project Description & "The Why"
+The Mission: Democratizing Safety Compliance
+Currently, the market for Safety Data Sheet (SDS) management is dominated by high-cost, proprietary "electronic filing cabinets." For many hospitals, clinics, and industrial facilities, the recurring subscription costs of these platforms are prohibitively expensive. This creates a dangerous gap where safety documentation remains locked in physical binders or outdated, hard-to-navigate legacy systems.
+
+GuardianSDS was created to break this barrier. We believe that critical safety information should be accessible, intelligent, and affordable.
+
+Why GuardianSDS?
+Cost Barrier Removal: Most facility managers want to do the right thing, but "Compliance Taxes" from software vendors eat into maintenance and safety budgets. This project provides a world-class solution that costs a facility nearly nothing to run.
+
+Accessibility for All: By utilizing modern web tech and QR-code mapping, we ensure that a housekeeper, a lab tech, or a nurse can access life-saving first-aid data in seconds, not minutes.
+
+Customization Through Open Source: No two facilities are identical. Because this project is open source, organizations can modify the code to integrate with their specific inventory systems, custom floor plans, or internal safety protocols without waiting for a vendor's "roadmap."
+
+Community-Driven Safety: We are building a standard for safety data extraction. As more developers and safety professionals contribute, the "Neural OCR" engine becomes more accurate for everyone.
+
+🛠 Why I Created This
+"As a Facilities and IT Manager in the healthcare sector, I’ve seen firsthand how the high cost of compliance software can prevent smaller facilities from adopting the best safety tools. I wanted to build a solution that allows facilities to take ownership of their data, protect their staff, and meet OSHA/The Joint Commission standards without the 'enterprise' price tag." — Terry Stagg
+
 **GuardianSDS** is an AI-native Safety Data Sheet (SDS) management and compliance platform. Built for facilities managers, hospitals, and industrial teams, it moves safety documentation from "dead PDFs" into a proactive, searchable, and voice-activated safety engine.
 
 ## 🚀 Key Features
